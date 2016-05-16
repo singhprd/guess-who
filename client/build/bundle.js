@@ -19688,6 +19688,8 @@
 	  displayName: 'Main',
 	
 	  getInitialState: function getInitialState() {
+	    var batmanCard = new Card("Batman", false, "url");
+	
 	    var randomAnswer = this.props.cardArray[Math.floor(Math.random() * this.props.cardArray.length)];
 	    return { cardData: this.props.cardArray, answer: randomAnswer };
 	  },

@@ -1,0 +1,16 @@
+.Card {
+  background-color: red;
+  height: 200px;
+  width: 200px;
+  border: 1px solid black;
+}
+
+.CardImage {
+  height: 100px;
+  width: 100px
+}
+
+.showAll {
+  border: 1px solid black;
+  width: 500px;
+}

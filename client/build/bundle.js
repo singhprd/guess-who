@@ -49,13 +49,13 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
 	var Main = __webpack_require__(159);
-	var Card = __webpack_require__(164);
+	var CardModel = __webpack_require__(164);
 	
 	var url = "https://s-media-cache-ak0.pinimg.com/736x/4b/53/55/4b53554766a2ed8fe948c08b09f37b1b.jpg";
 	var cardArray = [];
-	var peterCard = new Card("Peter", false, url);
-	var jimBobCard = new Card("JimBob", true, url);
-	var batmanCard = new Card("Batman", false, url);
+	var peterCard = new CardModel("Peter", false, url, true);
+	var jimBobCard = new CardModel("JimBob", true, url, false);
+	var batmanCard = new CardModel("Batman", false, url, true);
 	cardArray.push(peterCard);
 	cardArray.push(jimBobCard);
 	cardArray.push(batmanCard);
@@ -19702,37 +19702,22 @@
 	      return false;
 	    }
 	  },
-	  askForHint: function askForHint(item) {
-	    var _iteratorNormalCompletion = true;
-	    var _didIteratorError = false;
-	    var _iteratorError = undefined;
-	
-	    try {
-	      for (var _iterator = this.state.cardData[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	        var each = _step.value;
-	
-	        if (each.item = true) {
-	          each.currrentHint = true;
-	        } else {
-	          each.currrentHint = false;
-	        }
-	      }
-	    } catch (err) {
-	      _didIteratorError = true;
-	      _iteratorError = err;
-	    } finally {
-	      try {
-	        if (!_iteratorNormalCompletion && _iterator.return) {
-	          _iterator.return();
-	        }
-	      } finally {
-	        if (_didIteratorError) {
-	          throw _iteratorError;
-	        }
+	  checkHint: function checkHint(attribute) {
+	    if (this.state.answer[attribute] == true) {
+	      return true;
+	    } else {
+	      return false;
+	    }
+	  },
+	  getPotentialClues: function getPotentialClues() {
+	    var answer = this.state.answer;
+	    var toReturn = [];
+	    for (var each in answer) {
+	      if (typeof answer[each] === "boolean") {
+	        toReturn.push(each);
 	      }
 	    }
-	
-	    ;
+	    return toReturn;
 	  },
 	  render: function render() {
 	    return React.createElement(
@@ -19740,7 +19725,7 @@
 	      null,
 	      React.createElement(CardContainter, { cardData: this.state.cardData }),
 	      React.createElement(GuessSelector, { cardData: this.state.cardData, checkGuess: this.checkGuess }),
-	      React.createElement(AskQuestion, { askForHint: this.askForHint })
+	      React.createElement(AskQuestion, { checkHint: this.checkHint, clues: this.getPotentialClues() })
 	    );
 	  }
 	});
@@ -19759,7 +19744,7 @@
 	  displayName: "Card",
 	
 	  getInitialState: function getInitialState() {
-	    return { isHidden: false, currrentHint: this.props.data.currrentHint };
+	    return { isHidden: false };
 	  },
 	  handleClick: function handleClick(e) {
 	    this.setState({ isHidden: true });
@@ -19769,7 +19754,6 @@
 	  },
 	  render: function render() {
 	    var card = this.props.data;
-	    console.log(this.state.currrentHint);
 	
 	    if (this.state.isHidden) {
 	      return React.createElement(
@@ -19777,7 +19761,7 @@
 	        { className: "Card" },
 	        React.createElement(
 	          "button",
-	          { onClick: this.unhideCard },
+	          { className: "pure-button", onClick: this.unhideCard },
 	          "UnHide"
 	        )
 	      );
@@ -19793,7 +19777,7 @@
 	        React.createElement("img", { className: "CardImage", src: card.imageUrl }),
 	        React.createElement(
 	          "button",
-	          { onClick: this.handleClick },
+	          { className: "pure-button pure-button-primary", onClick: this.handleClick },
 	          "Hide"
 	        )
 	      );
@@ -19944,7 +19928,7 @@
 	      ),
 	      React.createElement(
 	        "button",
-	        { onClick: this.handleClick },
+	        { className: "pure-button pure-button-primary", onClick: this.handleClick },
 	        "Guess Who!"
 	      ),
 	      React.createElement(
@@ -19969,17 +19953,80 @@
 	var AskQuestion = React.createClass({
 	  displayName: "AskQuestion",
 	
+	  getInitialState: function getInitialState() {
+	    return { selected: this.props.clues[0], cluesLeft: 5, lastClue: "" };
+	  },
 	  handleClick: function handleClick() {
-	    this.props.askForHint("hasGlasses");
+	    if (this.state.cluesLeft == 0) {
+	      return;
+	    }
+	    var newClues = this.state.cluesLeft - 1;
+	    this.setState({ cluesLeft: newClues });
+	    this.props.checkHint();
+	    var a = this.props.checkHint(this.state.selected);
+	    this.setState({ lastClue: a.toString() });
+	  },
+	  handleChange: function handleChange(e) {
+	    e.preventDefault();
+	    var selected = e.target.value;
+	    this.setState({ selected: selected });
 	  },
 	  render: function render() {
+	    var cluesArray = [];
+	    var i = 0;
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
+	
+	    try {
+	      for (var _iterator = this.props.clues[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	        var each = _step.value;
+	
+	        cluesArray.push(React.createElement(
+	          "option",
+	          { key: i++ },
+	          each
+	        ));
+	      }
+	    } catch (err) {
+	      _didIteratorError = true;
+	      _iteratorError = err;
+	    } finally {
+	      try {
+	        if (!_iteratorNormalCompletion && _iterator.return) {
+	          _iterator.return();
+	        }
+	      } finally {
+	        if (_didIteratorError) {
+	          throw _iteratorError;
+	        }
+	      }
+	    }
+	
+	    ;
 	    return React.createElement(
 	      "div",
 	      null,
 	      React.createElement(
+	        "select",
+	        { onChange: this.handleChange },
+	        cluesArray
+	      ),
+	      React.createElement(
 	        "button",
-	        { onClick: this.handleClick },
-	        "Ask for hint"
+	        { className: "pure-button pure-button-primary", onClick: this.handleClick },
+	        "Ask?"
+	      ),
+	      React.createElement(
+	        "h2",
+	        null,
+	        this.state.lastClue
+	      ),
+	      React.createElement(
+	        "h3",
+	        null,
+	        "Clues Left: ",
+	        this.state.cluesLeft
 	      )
 	    );
 	  }
@@ -19993,11 +20040,11 @@
 
 	"use strict";
 	
-	var Card = function Card(name, hasGlasses, url) {
-	  this.currrentHint = false;
+	var Card = function Card(name, hasGlasses, url, hasHat) {
 	  this.name = name;
 	  this.hasGlasses = hasGlasses;
 	  this.imageUrl = url;
+	  this.hasHat = hasHat;
 	};
 	
 	Card.prototype.getName = function () {

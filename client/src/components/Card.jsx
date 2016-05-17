@@ -2,7 +2,7 @@ var React = require('react');
 
 var Card = React.createClass({
   getInitialState: function() {
-    return {isHidden: false, currrentHint: this.props.data.currrentHint}
+    return {isHidden: false}
   },
   handleClick: function(e){
     this.setState({isHidden: true});
@@ -12,12 +12,11 @@ var Card = React.createClass({
   },
   render: function() {
     var card = this.props.data;
-    console.log(this.state.currrentHint);
 
     if(this.state.isHidden) {
       return (
         <div className="Card">
-          <button onClick={this.unhideCard}>UnHide</button>
+          <button className="pure-button" onClick={this.unhideCard}>UnHide</button>
         </div>
         )
     } else {
@@ -25,7 +24,7 @@ var Card = React.createClass({
       <div className="Card">
         <h3>{card.name}</h3>
         <img className="CardImage" src={card.imageUrl}/>
-        <button onClick={this.handleClick}>Hide</button>
+        <button className="pure-button pure-button-primary" onClick={this.handleClick}>Hide</button>
       </div>
       )
   }

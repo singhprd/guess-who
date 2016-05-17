@@ -22,21 +22,23 @@ var Main = React.createClass({
       return false;
     }
   },
-  askForHint: function(item) {
-    for( var each of this.state.cardData ) {
-      if (each.item = true) { 
-        each.currrentHint = true
-      } else {
-        each.currrentHint = false
-      }
-    };
+  checkHint: function (attribute) {
+    if (this.state.answer[attribute] == true ) {return true} else {return false}
+  },
+  getPotentialClues: function () {
+    var answer = this.state.answer;
+    var toReturn = [];
+    for (var each in answer) {
+      if(typeof(answer[each]) === "boolean"){toReturn.push(each)}
+    }
+    return toReturn;
   },
   render: function(){
     return(
       <div>
         <CardContainter cardData={this.state.cardData}/>
         <GuessSelector cardData={this.state.cardData} checkGuess={this.checkGuess}/>
-        <AskQuestion askForHint={this.askForHint}/>
+        <AskQuestion checkHint={this.checkHint} clues={this.getPotentialClues()}/>
       </div>
     )
   }

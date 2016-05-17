@@ -31,7 +31,7 @@ var GuessSelector = React.createClass({
         <select onChange={this.handleOnChange}>
           {this.createDropDown()};
         </select>
-        <button onClick={this.handleClick}>Guess Who!</button>
+        <button className="pure-button pure-button-primary" onClick={this.handleClick}>Guess Who!</button>
         <h1>{this.state.guessResult}</h1>
       </div>
       )
